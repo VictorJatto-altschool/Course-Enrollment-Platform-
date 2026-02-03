@@ -12,4 +12,9 @@ app.include_router(user.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the Course Enrollment Platform!"}
+    return {
+        "message": "Welcome to the Course Enrollment Platform!",
+        "docs": "/docs",
+        "redoc": "/redoc",
+        "openapi": "/openapi.json",
+    }
