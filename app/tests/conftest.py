@@ -115,12 +115,12 @@ def student_token(client):
     client.post("/auth/register", json={
         "name": "Student",
         "email": "student@test.com",
-        "password": "pass123",
+        "password": "StudentPass123!",
         "role": "student"
     })
     response = client.post(
         "/auth/login",
-        json={"email": "student@test.com", "password": "pass123"},
+        json={"email": "student@test.com", "password": "StudentPass123!"},
     )
     return response.json()["access_token"]
 
@@ -130,12 +130,12 @@ def admin_token(client):
     client.post("/auth/register", json={
         "name": "Admin",
         "email": "admin@test.com",
-        "password": "adminpass",
+        "password": "AdminPass123!",
         "role": "admin"
     })
     response = client.post(
         "/auth/login",
-        json={"email": "admin@test.com", "password": "adminpass"},
+        json={"email": "admin@test.com", "password": "AdminPass123!"},
     )
     return response.json()["access_token"]
 

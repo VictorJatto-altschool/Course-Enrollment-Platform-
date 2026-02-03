@@ -4,7 +4,7 @@ from email_validator import EmailNotValidError, validate_email
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.auth.password import hash_password, verify_password
+from app.auth.password import hash_password, verify_password, validate_password_strength
 from app.models.user import User
 
 def create_user(db: Session, name: str, email: str, password: str, role: str) -> User:
@@ -19,6 +19,12 @@ def create_user(db: Session, name: str, email: str, password: str, role: str) ->
         raise HTTPException(status_code=400, detail="Email already registered")
     if role not in ["student", "admin"]:
         raise HTTPException(status_code=400, detail="Invalid role")
+
+    try:
+        validate_password_strength(password)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
     user = User(
         name=name,
         email=email,

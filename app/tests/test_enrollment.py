@@ -52,14 +52,14 @@ def test_enrollment_fails_if_course_full(client, student_headers, create_course)
         json={
             "name": "Student2",
             "email": "student2@test.com",
-            "password": "pass123",
+            "password": "Student2Pass123!",
             "role": "student",
         },
     )
     assert first_user.status_code == 201
     token = client.post(
         "/auth/login",
-        json={"email": "student2@test.com", "password": "pass123"},
+        json={"email": "student2@test.com", "password": "Student2Pass123!"},
     ).json()["access_token"]
     student2_headers = {"Authorization": f"Bearer {token}"}
 

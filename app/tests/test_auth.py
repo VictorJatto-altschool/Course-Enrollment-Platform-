@@ -2,16 +2,42 @@ def test_user_registration(client):
     response = client.post("/auth/register", json={
         "name": "Test User",
         "email": "test@example.com",
-        "password": "password123",
+        "password": "Password123!",
         "role": "student"
     })
     assert response.status_code == 201
 
 
+def test_registration_rejects_invalid_email(client):
+    response = client.post(
+        "/auth/register",
+        json={
+            "name": "Bad Email",
+            "email": "not-an-email",
+            "password": "Password123!",
+            "role": "student",
+        },
+    )
+    assert response.status_code in (400, 422)
+
+
+def test_registration_rejects_weak_password(client):
+    response = client.post(
+        "/auth/register",
+        json={
+            "name": "Weak Pass",
+            "email": "weakpass@example.com",
+            "password": "pass123",
+            "role": "student",
+        },
+    )
+    assert response.status_code in (400, 422)
+
+
 def test_user_login(client):
     response = client.post(
         "/auth/login",
-        json={"email": "test@example.com", "password": "password123"},
+        json={"email": "test@example.com", "password": "Password123!"},
     )
     assert response.status_code == 200
     assert "access_token" in response.json()
@@ -24,7 +50,7 @@ def test_get_profile_authenticated(client):
         json={
             "name": "Profile User",
             "email": "profile@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "role": "student",
         },
     )
@@ -32,7 +58,7 @@ def test_get_profile_authenticated(client):
 
     login = client.post(
         "/auth/login",
-        json={"email": "profile@example.com", "password": "password123"},
+        json={"email": "profile@example.com", "password": "Password123!"},
     )
     assert login.status_code == 200
     token = login.json()["access_token"]
@@ -53,7 +79,7 @@ def test_email_must_be_unique(client):
         json={
             "name": "User 1",
             "email": "unique@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "role": "student",
         },
     )
@@ -64,7 +90,7 @@ def test_email_must_be_unique(client):
         json={
             "name": "User 2",
             "email": "unique@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "role": "student",
         },
     )
@@ -77,7 +103,7 @@ def test_role_must_be_validated(client):
         json={
             "name": "Bad Role",
             "email": "badrole@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "role": "teacher",
         },
     )
@@ -90,7 +116,7 @@ def test_inactive_users_cannot_authenticate(client, db_session):
         json={
             "name": "Inactive",
             "email": "inactive@example.com",
-            "password": "password123",
+            "password": "Password123!",
             "role": "student",
         },
     )
@@ -105,6 +131,6 @@ def test_inactive_users_cannot_authenticate(client, db_session):
 
     login = client.post(
         "/auth/login",
-        json={"email": "inactive@example.com", "password": "password123"},
+        json={"email": "inactive@example.com", "password": "Password123!"},
     )
     assert login.status_code == 401
